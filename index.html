@@ -153,27 +153,28 @@
                                 </div>
                             </div>
                         </div>
-        <div id="jsonContent"></div>
-
-            <script>
-            $.getJSON('hourly_json.json', function(data) {
-                var html = '<table>';
-                var keys = Object.keys(data);
-                var length = data[keys[0]].length;
-            
-                for (var i = 0; i < length; i++) {
-                    html += '<tr>';
-                    for (var j = 0; j < keys.length; j++) {
-                        html += '<td>' + data[keys[j]][i] + '</td>';
-                    }
-                    html += '</tr>';
-                }
-            
-                html += '</table>';
-                $('#jsonContent').html(html);
-            });
-            </script>
-               
+            <div class="xml fetch test">
+                        <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
+                        <script>
+                        $.ajax({
+                            type: "GET",
+                            url: "hourly_xml.xml",
+                            dataType: "xml",
+                            success: function(xml) {
+                                var html = '<table>';
+                                $(xml).find('row').each(function() {
+                                    html += '<tr>';
+                                    $(this).children().each(function() {
+                                        html += '<td>' + $(this).text() + '</td>';
+                                    });
+                                    html += '</tr>';
+                                });
+                                html += '</table>';
+                                $('.card-body').html(html);
+                            }
+                        });
+                        </script>  
+            </div>
     </div>            
             </main>
                 
