@@ -10,6 +10,7 @@
         <link href="https://cdn.jsdelivr.net/npm/simple-datatables@7.1.2/dist/style.min.css" rel="stylesheet" />
         <link href="css/styles.css" rel="stylesheet" />
         <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
+        <script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/4.4.0/chart.umd.min.js"></script>
         <script src="https://use.fontawesome.com/releases/v6.3.0/js/all.js" crossorigin="anonymous"></script>
     </head>
     <body class="sb-nav-fixed">
@@ -68,7 +69,7 @@
                             <div class="collapse" id="collapsePages" aria-labelledby="headingTwo" data-bs-parent="#sidenavAccordion">
                                 <nav class="sb-sidenav-menu-nested nav accordion" id="sidenavAccordionPages">
                                     <a class="nav-link collapsed" href="#" data-bs-toggle="collapse" data-bs-target="#pagesCollapseAuth" aria-expanded="false" aria-controls="pagesCollapseAuth">
-                                        Authentication
+                                        Authentication(지울예정)
                                         <div class="sb-sidenav-collapse-arrow"><i class="fas fa-angle-down"></i></div>
                                     </a>
                                     <div class="collapse" id="pagesCollapseAuth" aria-labelledby="headingOne" data-bs-parent="#sidenavAccordionPages">
@@ -116,48 +117,52 @@
                             <li class="breadcrumb-item active">Dashboard</li>
                         </ol>
                         
-            <div class="xml fetch test">
+                    <div class="csv fetch test">
                         <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
                         <script>
                             $.ajax({
-                                type: "GET",
-                                url: "hourly_xml.xml",
-                                dataType: "xml",
-                                success: function(xml) {
-                                    var labels = [];
-                                    var data = [];
+                                url: 'hourly_csv.csv',
+                                dataType: 'text',
+                            }).done(function(data) {
+                                var allRows = data.split(/\r?\n|\r/);
+                                var table = '<table>';
                             
-                                    $(xml).find('row').each(function() {
-                                        labels.push($(this).find('label').text());
-                                        data.push($(this).find('data').text());
-                                    });
+                                for (var singleRow = 0; singleRow < allRows.length; singleRow++) {
+                                    if (singleRow === 0) {
+                                        table += '<thead>';
+                                        table += '<tr>';
+                                    } else {
+                                        table += '<tr>';
+                                    }
                             
-                                    var ctx = document.getElementById('myChart').getContext('2d');
-                                    var myChart = new Chart(ctx, {
-                                        type: 'bar',
-                                        data: {
-                                            labels: labels,
-                                            datasets: [{
-                                                label: '# of Votes',
-                                                data: data,
-                                                backgroundColor: 'rgba(75, 192, 192, 0.2)',
-                                                borderColor: 'rgba(75, 192, 192, 1)',
-                                                borderWidth: 1
-                                            }]
-                                        },
-                                        options: {
-                                            scales: {
-                                                y: {
-                                                    beginAtZero: true
-                                                }
-                                            }
+                                    var rowCells = allRows[singleRow].split(',');
+                                    for (var rowCell = 0; rowCell < rowCells.length; rowCell++) {
+                                        if (singleRow === 0) {
+                                            table += '<th>';
+                                            table += rowCells[rowCell];
+                                            table += '</th>';
+                                        } else {
+                                            table += '<td>';
+                                            table += rowCells[rowCell];
+                                            table += '</td>';
                                         }
-                                    });
-                                }
+                                    }
+                            
+                                    if (singleRow === 0) {
+                                        table += '</tr>';
+                                        table += '</thead>';
+                                        table += '<tbody>';
+                                    } else {
+                                        table += '</tr>';
+                                    }
+                                } 
+                                table += '</tbody>';
+                                table += '</table>';
+                                $('.csv fetch test').append(table);
                             });
                         </script>  
-            </div>
-    </div>            
+                </div>
+                </div>            
             </main>
                 
                 <footer class="py-4 bg-light mt-auto">
